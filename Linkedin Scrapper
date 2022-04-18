@@ -1,0 +1,55 @@
+from selenium import webdriver
+import pandas as pd
+import numpy as np
+
+url = 'https://sg.linkedin.com/'
+
+driver = webdriver.Chrome()
+driver.get(url)
+
+username = driver.find_element_by_name('session_key')
+username.send_keys('xxx')
+my_password = driver.find_element_by_name('session_password')
+my_password.send_keys('xxx')
+
+clicking = driver.find_element_by_class_name('sign-in-form__submit-button')
+clicking.click()
+
+driver.get('https://www.linkedin.com/search/results/content/?keywords=decarbonisation%20blueprint&origin=CLUSTER_EXPANSION&position=0&searchId=2959461e-0f9b-4987-93b5-dd1c4153570c&sid=QQ0')
+#time.sleep(10)
+
+title = driver.find_elements_by_class_name('feed-shared-actor__name')
+a = []
+for z in title:
+    a.append(z.text)
+
+caption = driver.find_elements_by_class_name('feed-shared-update-v2__description-wrapper')
+b = []
+for w in caption:
+    b.append(w.text)
+
+
+time = driver.find_elements_by_class_name('feed-shared-actor__sub-description t-12 t-normal')
+c = []
+for v in time:
+    c.append(v.text)
+
+likes = driver.find_elements_by_class_name('social-details-social-counts__reactions-count')
+d = []
+for t in likes:
+    d.append(t.text)
+
+comments = driver.find_elements_by_class_name('social-details-social-counts__comments')
+e = []
+for s in comments:
+    e.append(s.text)
+
+#print(a, b, c, d, e)
+
+col = ["Title",'caption' 'time' ,'likes', 'comments' ]
+my_dict = {"Title": a,'caption': b, 'time': c ,'likes' : d, 'comments': e}
+dict_df = pd.DataFrame({ key:pd.Series(value) for key, value in my_dict.items() })
+dict_df.replace(np.nan,0)
+print(dict_df)
+
+#dict_df.to_excel("MPA LI.xlsx")
